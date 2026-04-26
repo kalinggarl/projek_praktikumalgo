@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 
@@ -73,13 +74,83 @@ void inputBuku() {
     cout << "Buku berhasil ditambahkan!\n";
 }
 
+// ==== OUTPUTNYA ==== //
 
+void outputBuku(){
+    if(jumlahBuku == 0) {
+        cout << "Belum ada data bukunya!\n";
+        return;
+    }
+
+    int pilih;
+    cout << "Tampil data secara:\n";
+    cout << "1. Ascending\n";
+    cout << "2. Descending\n";
+    cout << "Pilihlah: ";
+    cin >> pilih;
+
+    if(pilih != 1 && pilih != 2){
+        cout << "Pilihan tidak tersedia!\n";
+        return;
+    }
+
+    Buku temp[100];
+    for(int i=0; i<jumlahBuku; i++) { //copy datanya
+        temp[i] = daftarBuku[i];
+    }
+    for(int i=0; i<jumlahBuku - 1; i++) { //sorting
+        for(int j=0; j<jumlahBuku - i - 1; j++) {
+            if(pilih == 1){
+                if(temp[j].nama > temp[j+1].nama) { //ascending
+                    swap(temp[j], temp[j+1]);
+                }
+            } else {
+                if(temp[j].nama < temp[j+1].nama) { //descending
+                    swap(temp[j], temp[j+1]);
+                }
+            }
+        }
+    }
+    cout << "\n==== DATA BUKU ====\n";
+    for(int i=0; i<jumlahBuku; i++){
+        cout << "Nama    : " << temp[i].nama <<endl;
+        cout << "ID      : " << temp[i].id <<endl;
+        cout << "Harga   : " << temp[i].harga <<endl;
+        cout << "Kategori: " << temp[i].kategori <<endl;
+    }
+}
+// === SORTFILE === //
+void sortFile(){
+    if(jumlahBuku == 0) {
+        cout << "Data masih kosong!\n";
+        return;
+    }
+    Buku temp[100];
+    for (int i = 0; i < jumlahBuku; i++) { //copydata
+        temp[i] = daftarBuku[i];
+    }
+    for (int i = 0; i < jumlahBuku - 1; i++) {
+        for (int j = 0; j < jumlahBuku - i - 1; j++) {
+            if (temp[j].nama > temp[j+1].nama) {
+                swap(temp[j], temp[j+1]);
+            }
+        }
+    }
+
+     ofstream file("sorted_buku.txt");
+     for (int i = 0; i < jumlahBuku; i++) {
+        file << temp[i].nama << " | "
+             << temp[i].id << " | "
+             << temp[i].harga << " | "
+             << temp[i].kategori << endl;
+    }
+     file.close();
+     cout << "Data berhasil diurutkan & disimpan\n";
+}
 
 int main() {
 
-    if (!login())
-    {
-
+    if (!login()){
         return 0;
     }
 
@@ -87,7 +158,9 @@ int main() {
     do{
         cout << "\n=== MENU PERPUSTAKAAN ===\n";
         cout << "1. Input Buku\n";
-        cout << "2. Keluar\n";
+        cout << "2. Output Buku\n";
+        cout << "3. Sorting Buku\n";
+        cout << "4. Keluar\n";
         cout << "Pilih: ";
         cin >> pilihan;
         switch (pilihan)
@@ -96,14 +169,18 @@ int main() {
             inputBuku();
             break;
         case 2:
+            ouputBuku();
+            break;
+        case 3:
+            sortFile();
+            break;
+        case 4:
             cout << "Keluar...\n";
             break;
         default:
             cout << "Pilihan tidak valid!\n";
         }
 
-    } while (pilihan != 2);
-
-
+    } while (pilihan != 4);
     return 0;
 }
