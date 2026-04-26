@@ -4,7 +4,7 @@ using namespace std;
 
 struct admin{   
     string username;
-    string password;
+    string password; 
 };
 
 struct Buku {
