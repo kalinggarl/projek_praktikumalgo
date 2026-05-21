@@ -169,7 +169,7 @@ int main() {
             inputBuku();
             break;
         case 2:
-            ouputBuku();
+            outputBuku();
             break;
         case 3:
             sortFile();
