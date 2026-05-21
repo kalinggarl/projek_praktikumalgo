@@ -148,6 +148,83 @@ void sortFile(){
      cout << "Data berhasil diurutkan & disimpan\n";
 }
 
+void searchingBuku(){
+
+    if(jumlahBuku == 0){
+        cout << "Data buku masih kosong!\n";
+        return;
+    }
+
+    int pilih;
+    bool ditemukan = false;
+
+    cout << "\n=== SEARCHING BUKU ===\n";
+    cout << "1. Search by Nama Buku\n";
+    cout << "2. Search by ID Buku\n";
+    cout << "Pilih: ";
+    cin >> pilih;
+
+    // ===== SEARCH BY NAMA =====
+    if(pilih == 1){
+
+        string cariNama;
+
+        cin.ignore();
+
+        cout << "Masukkan nama buku: ";
+        getline(cin, cariNama);
+        for(int i = 0; i < jumlahBuku; i++){
+
+            if(daftarBuku[i].nama == cariNama){
+
+                cout << "\n=== DATA DITEMUKAN ===\n";
+                cout << "Nama     : " << daftarBuku[i].nama << endl;
+                cout << "ID       : " << daftarBuku[i].id << endl;
+                cout << "Harga    : " << daftarBuku[i].harga << endl;
+                cout << "Kategori : " << daftarBuku[i].kategori << endl;
+
+                ditemukan = true;
+                break;
+            }
+        }
+    }
+
+ // ===== SEARCH BY ID =====
+    else if(pilih == 2){
+
+        int cariID;
+
+        cout << "Masukkan ID buku: ";
+        cin >> cariID;
+
+        for(int i = 0; i < jumlahBuku; i++){
+
+            if(daftarBuku[i].id == cariID){
+
+                cout << "\n=== DATA DITEMUKAN ===\n";
+                cout << "Nama     : " << daftarBuku[i].nama << endl;
+                cout << "ID       : " << daftarBuku[i].id << endl;
+                cout << "Harga    : " << daftarBuku[i].harga << endl;
+                cout << "Kategori : " << daftarBuku[i].kategori << endl;
+
+                ditemukan = true;
+                break;
+            }
+        }
+    }
+
+// ===== PILIHAN TIDAK VALID =====
+    else{
+        cout << "Pilihan tidak valid!\n";
+        return;
+    }
+
+    // ===== DATA TIDAK DITEMUKAN =====
+    if(!ditemukan){
+        cout << "Data tidak ditemukan!\n";
+    }
+}
+
 int main() {
 
     if (!login()){
@@ -160,7 +237,8 @@ int main() {
         cout << "1. Input Buku\n";
         cout << "2. Output Buku\n";
         cout << "3. Sorting Buku\n";
-        cout << "4. Keluar\n";
+        cout << "4. Searching Buku\n";
+        cout << "5. Keluar\n";
         cout << "Pilih: ";
         cin >> pilihan;
         switch (pilihan)
@@ -175,12 +253,15 @@ int main() {
             sortFile();
             break;
         case 4:
+            searchingBuku();
+            break;
+        case 5: 
             cout << "Keluar...\n";
             break;
         default:
             cout << "Pilihan tidak valid!\n";
         }
 
-    } while (pilihan != 4);
+    } while (pilihan != 5);
     return 0;
 }
