@@ -41,6 +41,45 @@ void konfirmasiKembali() {
     cin.ignore(); // Membersihkan sisa buffer setelah input karakter
 }
 
+// ==================== BARU: FUNGSI FILE HANDLING ====================
+
+// Fungsi untuk menyimpan seluruh data dari array ke dalam file txt
+void simpanKeFile() {
+    ofstream file("database_buku.txt");
+    if (file.is_open()) {
+        file << adaArsipNegara << endl;
+        file << jumlahBuku << endl;
+        for (int i = 0; i < jumlahBuku; i++) {
+            file << daftarBuku[i].nama << endl;
+            file << daftarBuku[i].id << endl;
+            file << daftarBuku[i].harga << endl;
+            file << daftarBuku[i].kategori << endl;
+        }
+        file.close();
+    }
+}
+
+// Fungsi untuk membaca data dari file txt ke dalam array saat program dinyalakan
+void bacaDariFile() {
+    ifstream file("database_buku.txt");
+    if (file.is_open()) {
+        file >> adaArsipNegara;
+        file >> jumlahBuku;
+        file.ignore(); // Bersihkan sisa enter setelah membaca jumlahBuku
+        
+        for (int i = 0; i < jumlahBuku; i++) {
+            getline(file, daftarBuku[i].nama);
+            file >> daftarBuku[i].id;
+            file >> daftarBuku[i].harga;
+            file.ignore(); // Bersihkan enter sebelum getline kategori
+            getline(file, daftarBuku[i].kategori);
+        }
+        file.close();
+    }
+}
+
+// ====================================================================
+
 bool cekLogin(string user, string pass){
     for(int i=0; i<jmlhadmins; i++){
         if(admins[i].username == user && admins[i].password == pass){
@@ -114,7 +153,7 @@ void inputBuku() {
             }
         }
 
-        // Validasi Kategori Khusus (Dipindah ke atas agar tahu apakah perlu skip harga atau tidak)
+        // Validasi Kategori Khusus
         string inputKat;
         string katLower;
         while (true) {
@@ -140,17 +179,18 @@ void inputBuku() {
 
         // Logika Pengisian Harga Buku
         if (katLower == "arsip negara") {
-            daftarBuku[jumlahBuku].harga = 0; // Otomatis gratis/0 untuk arsip negara tanpa tanya admin
+            daftarBuku[jumlahBuku].harga = 0; // Otomatis gratis/0 untuk arsip negara
             cout << "Harga Buku: 0 (Otomatis digratiskan karena merupakan Arsip Negara)\n";
         } else {
             cout << "Harga Buku: ";
             cin >> daftarBuku[jumlahBuku].harga;
-            cin.ignore(); // Bersihkan buffer setelah cin >> harga agar perulangan berikutnya aman
+            cin.ignore(); // Bersihkan buffer setelah cin >> harga
         }
 
         jumlahBuku++;
         cout << "Buku berhasil ditambahkan!\n";
     }
+    simpanKeFile(); // <-- UPDATE: Simpan otomatis setelah selesai input semua buku
     konfirmasiKembali();
 }
 
@@ -364,6 +404,7 @@ void deleteBuku(){
 
             cout << "Data berhasil dihapus!\n";
             ditemukan = true;
+            simpanKeFile(); // <-- UPDATE: Simpan perubahan setelah data dihapus
             break;
         }
     }
@@ -399,7 +440,7 @@ void editBuku(){
             cout << "Nama Buku Baru: ";
             getline(cin, daftarBuku[i].nama);
 
-            // Validasi ID Baru agar tidak bentrok dengan ID buku lainnya
+            // Validasi ID Baru
             int tempID;
             while (true) {
                 bool idDuplikat = false;
@@ -421,7 +462,7 @@ void editBuku(){
                 }
             }
 
-            // Validasi Kategori Baru (Dipindah ke atas untuk edit)
+            // Validasi Kategori Baru
             string inputKat;
             string katLower;
             while (true) {
@@ -445,7 +486,7 @@ void editBuku(){
                 }
             }
 
-            // Atur Harga Baru berdasarkan Kategori Baru hasil editan
+            // Atur Harga Baru berdasarkan Kategori Baru
             if (katLower == "arsip negara") {
                 daftarBuku[i].harga = 0;
                 cout << "Harga Buku Baru: 0 (Otomatis digratiskan karena merupakan Arsip Negara)\n";
@@ -457,6 +498,7 @@ void editBuku(){
 
             cout << "Data berhasil diedit!\n";
             ditemukan = true;
+            simpanKeFile(); // <-- UPDATE: Simpan perubahan setelah data berhasil diedit
             break;
         }
     }
@@ -470,6 +512,8 @@ int main() {
     if (!login()){
         return 0;
     }
+
+    bacaDariFile(); // <-- UPDATE: Otomatis membaca database lama sesaat setelah login berhasil
 
     int pilihan;
     do{
